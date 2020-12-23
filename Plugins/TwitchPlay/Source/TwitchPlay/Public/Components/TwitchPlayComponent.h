@@ -3,7 +3,10 @@
 #pragma once
 
 #include "Components/TwitchIRCComponent.h"
+#include "Delegates/Delegate.h"
+#include "Delegates/DelegateBase.h"
 #include "TwitchPlayComponent.generated.h"
+
 
 /**
  * Declaration of delegate type for commands received from chat.
@@ -78,6 +81,7 @@ public:
 	 * If you need to fire multiple events when a single command is received consider having just one event calling all the others.
 	 *
 	 * @param _command_name - The command to register (CASE SENSITIVE).
+	 * @param _has_options - Set if the command has options
 	 * @param _callback_function - The function to fire when the event rises.
 	 * @param _out_result - Result of the operation.
 	 *
@@ -91,7 +95,6 @@ public:
 	* Keep in mind that since each command can only be bound to a single function (and single object) unregistering that command will remove any function from any object.
 	*
 	* @param _command_name - The command to unregister (CASE SENSITIVE).
-	* @param _callback_function - The command to unregister.
 	* @param _out_result - Result of the operation.
 	*
 	* @return Whether the unregistration was successfully completed.
@@ -108,6 +111,7 @@ private:
 	 * Should call the parsing method to search for commands/options and fire the corresponding event.
 	 *
 	 * @param _message - The message that was received.
+	 * @param _has_options - Set if command has options
 	 * @param _username - Username of who sent the chat message
 	 *
 	 * NOTE: Method must be marked as UFUNCTION in order to bind a dynamic delegate to it!

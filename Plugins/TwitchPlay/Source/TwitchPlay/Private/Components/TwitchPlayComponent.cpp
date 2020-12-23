@@ -77,7 +77,21 @@ bool UTwitchPlayComponent::UnregisterCommand(const FString _command_name, FStrin
 
 void UTwitchPlayComponent::MessageReceivedHandler(const FString & _message, const FString & _username)
 {
-	FString command = GetCommandString(_message);
+	FString message_command = "";
+	FString message_options = "";
+
+	int32 options_start_index = _message.Find(" ");
+	if (options_start_index == INDEX_NONE)
+	{
+		message_command = _message;
+	}
+	else
+	{
+		_message.Split(" ", &message_command, &message_options, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+	}
+	
+	
+	FString command = GetCommandString(message_command);
 
 	// No reason to search for the command in the event map, there isn't any
 	if (command == "")
@@ -91,7 +105,8 @@ void UTwitchPlayComponent::MessageReceivedHandler(const FString & _message, cons
 	// Then fire the event
 	if (registered_command != nullptr)
 	{
-		TArray<FString> command_options = GetCommandOptionsStrings(_message);
+		TArray<FString> command_options = TArray<FString>();;
+		command_options = GetCommandOptionsStrings(message_options);			
 		registered_command->ExecuteIfBound(command, command_options, _username);
 	}
 }
@@ -99,15 +114,36 @@ void UTwitchPlayComponent::MessageReceivedHandler(const FString & _message, cons
 FString UTwitchPlayComponent::GetCommandString(const FString & _message) const
 {
 	// Only the first command is accepted
-	FString ret_command = GetDelimitedString(_message, command_encapsulation_char_);
+	//FString ret_command = GetDelimitedString(_message, command_encapsulation_char_);
+	FString ret_command ="";
+
+	// No delimited string can be found on an empty string
+	if (_message == "")
+	{
+		return "";
+	}
+
+	// Where does the delimiter start?
+	// Remember that the delimiter can be more than 1 character, so we need to add
+	// the delimiter length to find the actual start of the delimited string
+	int32 command_start_index = _message.Find(command_encapsulation_char_);
+
+	// If the message did not contain any start delimiter no command can be found
+	// Also, if the start delimiter is at the end of the string no command can be found
+	if (command_start_index == INDEX_NONE || command_start_index + command_encapsulation_char_.Len() == _message.Len())
+	{
+		return "";
+	}
+
+	ret_command = _message.Mid(command_start_index + command_encapsulation_char_.Len(), (_message.Len() - (command_start_index + command_encapsulation_char_.Len())));
 	return ret_command;
 }
 
 TArray<FString> UTwitchPlayComponent::GetCommandOptionsStrings(const FString & _message) const
 {
 	TArray<FString> ret_options = TArray<FString>();
-	FString options = GetDelimitedString(_message, options_encapsulation_char_);
-	options.ParseIntoArray(ret_options, TEXT(","));
+
+	_message.ParseIntoArray(ret_options, TEXT(" "));
 	return ret_options;
 }
 
@@ -141,7 +177,8 @@ FString UTwitchPlayComponent::GetDelimitedString(const FString & _in_string, con
 	// If we did not find an end delimiter no encapsulated string can be found
 	if (command_end_index == INDEX_NONE)
 	{
-		return "";
+		ret_delimited_string = _in_string.Mid(command_start_index + _delimiter.Len(), (_in_string.Len() - (command_start_index + _delimiter.Len())));
+		return ret_delimited_string;
 	}
 
 	// If we have the two delimiter positions get the string inbetween them
