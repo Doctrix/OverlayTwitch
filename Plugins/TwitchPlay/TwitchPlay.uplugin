@@ -10,7 +10,7 @@
 	"DocsURL": "https://goo.gl/kjg3s0",
 	"MarketplaceURL": "https://www.unrealengine.com/marketplace/twitchplay-plugin",
 	"SupportURL": "https://twitter.com/TheDiG3",
-	"EngineVersion": "4.25.0",
+	"EngineVersion": "4.26.0",
 	"CanContainContent": false,
 	"Installed": true,
 	"Modules": [
