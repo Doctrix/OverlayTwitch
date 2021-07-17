@@ -54,7 +54,7 @@
 		},
 		{
 			"Name": "DiscordMessenger",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/2a1ca175da3e40e8bd54c7d00d135c1b"
 		},
 		{
