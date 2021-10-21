@@ -1,2 +1,2 @@
-# GameBoxLive
- Jeu interactif twitch 
+# Overlay Twitch
+Overlay interactif pour twitch
